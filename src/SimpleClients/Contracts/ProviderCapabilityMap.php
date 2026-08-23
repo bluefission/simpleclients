@@ -60,6 +60,13 @@ class ProviderCapabilityMap
             'retry' => ['safe_methods' => ['GET']],
             'config' => ['base_url', 'headers', 'options.steps', 'options.search_limit'],
         ],
+        'meta_messaging' => [
+            'service' => 'meta_messaging',
+            'actions' => ['send_message', 'reply', 'verify_challenge', 'verify_signature', 'send'],
+            'auth' => ['oauth_token', 'app_secret', 'verify_token'],
+            'transports' => ['http'],
+            'config' => ['base_url', 'headers', 'options.api_version', 'options.sender_id', 'options.channel'],
+        ],
     ];
 
     public static function get(string $provider): ClientCapabilities

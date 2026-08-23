@@ -15,6 +15,7 @@ SimpleClients currently offers connectors to the following services:
 - Google Search
 - Grok
 - IP API Geo Location
+- Meta and Instagram messaging
 - Hugging Face
 - MurfAI
 - OCR providers
@@ -105,6 +106,34 @@ $updated = $zapier->configureZap('zap-id', 'store_lead', [
 ```
 
 Zapier uses OAuth bearer tokens and the Workflow API `/v2` endpoints. Step updates first retrieve the Zap, merge the selected step by alias, action, or title, and send the complete step list because Zapier replaces all steps on edit. `options.search_limit` controls how many Zaps are inspected by search and update operations.
+
+### Example: MetaMessagingClient
+
+```php
+<?php
+
+use BlueFission\SimpleClients\Contracts\ClientConfig;
+use BlueFission\SimpleClients\MetaMessagingClient;
+
+$messaging = new MetaMessagingClient(new ClientConfig([
+    'auth' => [
+        'token' => getenv('META_ACCESS_TOKEN'),
+        'app_secret' => getenv('META_APP_SECRET'),
+        'verify_token' => getenv('META_VERIFY_TOKEN'),
+    ],
+    'options' => [
+        'api_version' => getenv('META_API_VERSION'),
+        'sender_id' => getenv('META_SENDER_ID'),
+        'channel' => 'messenger',
+    ],
+]));
+
+$sent = $messaging->sendMessage('recipient-id', 'Hello');
+$challenge = $messaging->verifyChallenge($_GET);
+$signature = $messaging->verifySignature($rawBody, $signatureHeader);
+```
+
+Set `base_url` to `https://graph.instagram.com` and `options.channel` to `instagram` for the Instagram Login messaging endpoint. API versions remain explicit configuration so applications can advance them without a package release. Webhook signatures must be verified against the exact raw request body.
 
 ## Further Examples
 
