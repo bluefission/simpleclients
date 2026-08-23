@@ -71,3 +71,14 @@ new ClientCapabilities([
     'config' => ['from', 'template'],
 ]);
 ```
+
+Automation service:
+
+```php
+new ClientCapabilities([
+    'service' => 'zapier',
+    'actions' => ['search_zaps', 'create_zap', 'configure_zap'],
+    'auth' => ['oauth_token'],
+    'retry' => ['safe_methods' => ['GET']],
+]);
+```

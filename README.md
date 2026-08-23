@@ -23,6 +23,7 @@ SimpleClients currently offers connectors to the following services:
 - Speech transcription providers
 - Trello
 - Video analysis providers
+- Zapier Workflow API
 - WikiHow
 - Wikipedia
 - Wiki News
@@ -83,6 +84,27 @@ $response = $openai->complete('What is the capital of France?');
 
 print_r($response);
 ```
+
+### Example: ZapierClient
+
+```php
+<?php
+
+use BlueFission\SimpleClients\Contracts\ClientConfig;
+use BlueFission\SimpleClients\ZapierClient;
+
+$zapier = new ZapierClient(new ClientConfig([
+    'auth' => ['token' => getenv('ZAPIER_ACCESS_TOKEN')],
+]));
+
+$zaps = $zapier->searchZaps('lead capture');
+$created = $zapier->createZap('Capture leads', $steps);
+$updated = $zapier->configureZap('zap-id', 'store_lead', [
+    'inputs' => ['list_id' => 'qualified-leads'],
+]);
+```
+
+Zapier uses OAuth bearer tokens and the Workflow API `/v2` endpoints. Step updates first retrieve the Zap, merge the selected step by alias, action, or title, and send the complete step list because Zapier replaces all steps on edit. `options.search_limit` controls how many Zaps are inspected by search and update operations.
 
 ## Further Examples
 
