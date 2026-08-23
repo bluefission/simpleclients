@@ -44,4 +44,23 @@ class CloudHttpClientTest extends TestCase
         $this->assertSame(1, $curl->openCount);
         $this->assertSame(1, $curl->closeCount);
     }
+
+    public function testRequestPreservesRawStringBodyAndHeaders(): void
+    {
+        $curl = new CurlStub();
+        $client = new HttpClient($curl);
+        $body = 'grant_type=refresh_token&refresh_token=abc';
+
+        $client->request('POST', 'https://provider.example/token', [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ], $body);
+
+        $this->assertSame('POST', $curl->options[CURLOPT_CUSTOMREQUEST]);
+        $this->assertSame($body, $curl->options[CURLOPT_POSTFIELDS]);
+        $this->assertSame(
+            'application/x-www-form-urlencoded',
+            $curl->config['headers']['Content-Type']
+        );
+        $this->assertSame(strlen($body), $curl->config['headers']['Content-Length']);
+    }
 }

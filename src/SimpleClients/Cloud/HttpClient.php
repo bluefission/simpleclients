@@ -19,6 +19,7 @@ class HttpClient
     public function request(string $method, string $url, array $headers = [], $body = null): array
     {
         $method = Str::upper($method);
+        $headers = $this->headers($headers, $body);
         $this->curl->config([
             'target' => $url,
             'method' => '',
@@ -51,5 +52,30 @@ class HttpClient
             'body' => $body,
             'headers' => [],
         ];
+    }
+
+    private function headers(array $headers, mixed $body): array
+    {
+        if (!is_string($body)) {
+            return $headers;
+        }
+
+        foreach ($headers as $name => $value) {
+            if (is_string($name) && Str::lower($name) === 'content-length') {
+                return $headers;
+            }
+
+            if (is_int($name) && Str::make((string)$value)->lower()->startsWith('content-length:')) {
+                return $headers;
+            }
+        }
+
+        if (array_is_list($headers)) {
+            $headers[] = 'Content-Length: ' . Str::size($body);
+        } else {
+            $headers['Content-Length'] = Str::size($body);
+        }
+
+        return $headers;
     }
 }
