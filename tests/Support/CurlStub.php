@@ -7,8 +7,12 @@ namespace BlueFission\SimpleClients\Tests\Support;
 class CurlStub
 {
     public array $config = [];
+    public array $options = [];
     public array $queries = [];
     public string $result = '';
+    public int $openCount = 0;
+    public int $closeCount = 0;
+    public bool $throwOnQuery = false;
 
     public function config($key, $value = null): self
     {
@@ -22,11 +26,22 @@ class CurlStub
 
     public function open(): self
     {
+        $this->openCount++;
+        return $this;
+    }
+
+    public function option($key, $value): self
+    {
+        $this->options[$key] = $value;
         return $this;
     }
 
     public function query($data = null): self
     {
+        if ($this->throwOnQuery) {
+            throw new \RuntimeException('transport failed');
+        }
+
         $this->queries[] = $data;
         return $this;
     }
@@ -43,6 +58,7 @@ class CurlStub
 
     public function close(): self
     {
+        $this->closeCount++;
         return $this;
     }
 }

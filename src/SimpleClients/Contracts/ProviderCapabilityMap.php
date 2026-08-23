@@ -52,6 +52,14 @@ class ProviderCapabilityMap
             'transports' => ['http'],
             'config' => ['base_url', 'headers', 'options'],
         ],
+        'zapier' => [
+            'service' => 'zapier',
+            'actions' => ['search_zaps', 'create_zap', 'configure_zap', 'send'],
+            'auth' => ['oauth_token'],
+            'transports' => ['http'],
+            'retry' => ['safe_methods' => ['GET']],
+            'config' => ['base_url', 'headers', 'options.steps', 'options.search_limit'],
+        ],
     ];
 
     public static function get(string $provider): ClientCapabilities
